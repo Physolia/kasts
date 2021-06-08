@@ -41,6 +41,7 @@ Kirigami.ApplicationWindow {
     Component.onCompleted: {
         tabBarActive = SettingsManager.lastOpenedPage === "FeedListPage" ? 0
                      : SettingsManager.lastOpenedPage === "QueuePage" ? 0
+                     : SettingsManager.lastOpenedPage === "DiscoverPage" ? 1
                      : SettingsManager.lastOpenedPage === "EpisodeSwipePage" ? 1
                      : SettingsManager.lastOpenedPage === "DownloadSwipePage" ? 1
                      : 0
@@ -48,8 +49,10 @@ Kirigami.ApplicationWindow {
                                                     : SettingsManager.lastOpenedPage === "QueuePage" ? "qrc:/QueuePage.qml"
                                                     : SettingsManager.lastOpenedPage === "EpisodeSwipePage" ? "qrc:/EpisodeSwipePage.qml"
                                                     : SettingsManager.lastOpenedPage === "DownloadSwipePage" ? "qrc:/DownloadSwipePage.qml"
+                                                    : SettingsManager.lastOpenedPage === "DiscoverPage" ? "qrc:/DiscoverPage.qml"
                                                     : "qrc:/FeedListPage.qml")
         if (SettingsManager.refreshOnStartup) Fetcher.fetchAll();
+        console.log("Last Opened Page is the",SettingsManager.lastOpenedPage)
     }
 
     globalDrawer: Kirigami.GlobalDrawer {
@@ -90,6 +93,16 @@ Kirigami.ApplicationWindow {
                 onTriggered: {
                     SettingsManager.lastOpenedPage = "EpisodeSwipePage" // for persistency
                     tabBarActive = 1
+                }
+            },
+            Kirigami.PagePoolAction {
+                text: i18n("Discover")
+                iconName: "search"
+                pagePool: mainPagePool
+                page: "qrc:/DiscoverPage.qml"
+                onTriggered: {
+                    SettingsManager.lastOpenedPage = "DiscoverPage" // for persistency
+                    tabBarActive = 0
                 }
             },
             Kirigami.PagePoolAction {
