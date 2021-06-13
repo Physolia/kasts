@@ -21,7 +21,6 @@ set(SRCS_base
     errorlogmodel.cpp
     error.h
     mpris2/mpris2.cpp
-    feedsearchmodel.cpp
     resources.qrc
 )
 

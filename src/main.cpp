@@ -38,7 +38,6 @@
 #include "mpris2/mpris2.h"
 #include "queuemodel.h"
 #include "settingsmanager.h"
-#include "feedsearchmodel.h"
 
 #ifdef Q_OS_ANDROID
 Q_DECL_EXPORT
@@ -107,8 +106,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<FeedsModel>("org.kde.kasts", 1, 0, "FeedsModel");
     qmlRegisterType<QueueModel>("org.kde.kasts", 1, 0, "QueueModel");
-    qmlRegisterType<EpisodeModel>("org.kde.kasts", 1, 0, "EpisodeModel");
-    qmlRegisterType<FeedSearchModel>("org.kde.kasts", 1, 0, "FeedSearchModel");
+    qmlRegisterType<EpisodeModel>("org.kde.kasts", 1, 0, "EpisodeModel");\
     qmlRegisterType<Mpris2>("org.kde.kasts", 1, 0, "Mpris2");
 
     qmlRegisterUncreatableType<EntriesModel>("org.kde.kasts", 1, 0, "EntriesModel", QStringLiteral("Get from Feed"));
