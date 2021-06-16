@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<FeedsModel>("org.kde.kasts", 1, 0, "FeedsModel");
     qmlRegisterType<QueueModel>("org.kde.kasts", 1, 0, "QueueModel");
-    qmlRegisterType<EpisodeModel>("org.kde.kasts", 1, 0, "EpisodeModel");\
+    qmlRegisterType<EpisodeModel>("org.kde.kasts", 1, 0, "EpisodeModel");
     qmlRegisterType<Mpris2>("org.kde.kasts", 1, 0, "Mpris2");
 
     qmlRegisterUncreatableType<EntriesModel>("org.kde.kasts", 1, 0, "EntriesModel", QStringLiteral("Get from Feed"));
