@@ -16,6 +16,10 @@ Kirigami.ScrollablePage {
     id: page
     title: i18n("Discover")
     property string searchText: "https://gpodder.net/search.opml?q="
+    property string feedUrl: ""
+    onFeedUrlChanged: {
+        console.log("Feed URL changed")
+    }
 
     //Looking to create a more fancier search bar but for now its bare minimum to test the functionality.
     header: RowLayout {
@@ -50,7 +54,7 @@ Kirigami.ScrollablePage {
     //Model to populate the OverlayDrawer which would allow to preview the feed. Currently this logic seems pretty broken so I am not sure how that would work.
     XmlListModel {
         id: xmlFeedModel
-        source: ""
+        source: feedUrl
         query: "/rss/channel"
 
         XmlRole { name: "description"; query: "description/string()" }
@@ -78,6 +82,12 @@ Kirigami.ScrollablePage {
                     onTriggered: DataManager.addFeed(xmlUrl)
                 }
             ]
+            onClicked: {
+                feedUrlChanged()
+                feedUrl = xmlUrl
+                xmlFeedModel.source = xmlUrl
+                console.log(xmlFeedModel.get(0).title)
+            }
         }
     }
     //The opml does not come with an icon entry hence I am forced to use a ListView and I know it looks pretty bland when you only display the texts and no pics :(
