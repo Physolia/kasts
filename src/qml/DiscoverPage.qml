@@ -71,10 +71,13 @@ Kirigami.ScrollablePage {
                     color: listItem.checked || (listItem.pressed && !listItem.checked && !listItem.sectionDelegate) ? listItem.activeTextColor : listItem.textColor
                 }
             }
-            onClicked: {
-                xmlFeedModel.source = xmlUrl
-                console.log(xmlFeedModel.get(0).url) //unfinished
-            }
+            actions: [
+                Kirigami.Action {
+                    iconName: "kt-add-feeds"
+                    text: "Add to Subscriptions"
+                    onTriggered: DataManager.addFeed(xmlUrl)
+                }
+            ]
         }
     }
     //The opml does not come with an icon entry hence I am forced to use a ListView and I know it looks pretty bland when you only display the texts and no pics :(
