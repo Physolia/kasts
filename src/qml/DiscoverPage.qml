@@ -83,15 +83,9 @@ Kirigami.ScrollablePage {
                     color: listItem.checked || (listItem.pressed && !listItem.checked && !listItem.sectionDelegate) ? listItem.activeTextColor : listItem.textColor
                 }
             }
-            actions: [
-                Kirigami.Action {
-                    iconName: "kt-add-feeds"
-                    text: "Subscribe"
-                    onTriggered: DataManager.addFeed(xmlUrl)
-                }
-            ]
             onClicked: {
                 xmlFeedModel.source = xmlUrl
+                feedUrl = xmlUrl
                 feedInfoDrawer.open()
             }
         }
@@ -108,7 +102,7 @@ Kirigami.ScrollablePage {
         }
     }
     Kirigami.OverlayDrawer {
-        id: feedInfoDrawer
+        id: previewDrawer
         edge: Qt.BottomEdge
         height: 600
         parent: page
@@ -117,14 +111,26 @@ Kirigami.ScrollablePage {
             spacing: 10
             visible: xmlFeedModel.status == 1
             GenericHeader {
-                id: infoHeader
+                id: previewHeader
                 width: parent.width
                 image: (xmlFeedModel.status == 1) ? xmlFeedModel.get(0).imageUrl : ""
                 title: (xmlFeedModel.status == 1) ? xmlFeedModel.get(0).title : "No Title"
                 subtitle: (xmlFeedModel.status == 1) ? xmlFeedModel.get(0).title : "No Title"
+                Controls.Button {
+                    text: enabled ? "Subscribe" : "Subscribed"
+                    icon.name: "kt-add-feeds"
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+                    anchors.rightMargin: Kirigami.Units.largeSpacing * 2
+                    anchors.topMargin: Kirigami.Units.largeSpacing * 2
+                    onClicked: {
+                        DataManager.addFeed(feedUrl)
+                    }
+                    enabled: !DataManager.isFeedExists(feedUrl)
+                }
             }
             Controls.Label {
-                id: textLabel
+                id: previewLabel
                 Layout.margins: Kirigami.Units.gridUnit
                 text: (xmlFeedModel.status == 1) ? xmlFeedModel.get(0).description : "No Description"
                 textFormat: Text.RichText
