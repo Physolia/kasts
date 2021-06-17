@@ -63,11 +63,17 @@ Kirigami.ScrollablePage {
         id: xmlFeedModel
         source: ""
         query: "/rss/channel"
+        namespaceDeclarations: "declare namespace itunes='http://www.itunes.com/dtds/podcast-1.0.dtd';"
 
         XmlRole { name: "description"; query: "description/string()" }
         XmlRole { name: "title"; query: "title/string()" }
         XmlRole { name: "link"; query: "link/string()" }
         XmlRole { name: "imageUrl"; query: "image/url/string()" }
+        XmlRole { name: "subtitle"; query: "itunes:subtitle/string()" }
+        XmlRole { name: "author"; query: "itunes:author/string()" }
+        XmlRole { name: "keywords"; query: "itunes:keywords/string()" }
+        XmlRole { name: "ownername"; query: "itunes:owner/itunes:name/string()" }
+        XmlRole { name: "owneremail"; query: "itunes:owner/itunes:email/string()" }
     }
     XmlListModel {
         id: xmlTitleModel
@@ -133,7 +139,7 @@ Kirigami.ScrollablePage {
                 width: parent.width
                 image: (xmlFeedModel.status == 1) ? xmlFeedModel.get(0).imageUrl : ""
                 title: (xmlFeedModel.status == 1) ? xmlFeedModel.get(0).title : "No Title"
-                subtitle: (xmlFeedModel.status == 1) ? xmlFeedModel.get(0).title : "No Title"
+                subtitle: (xmlFeedModel.status == 1) ? xmlFeedModel.get(0).subtitle : "No subtitle"
                 Controls.Button {
                     text: isWidescreen ? (enabled ? i18n("Subscribe") : i18n("Subscribed")) : ""
                     icon.name: !DataManager.isFeedExists(feedUrl) ? "kt-add-feeds" : "answer"
