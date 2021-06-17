@@ -29,14 +29,12 @@ Kirigami.ScrollablePage {
     //Looking to create a more fancier search bar but for now its bare minimum to test the functionality.
     header: RowLayout {
         width: parent.width
-        Controls.TextField {
+        Kirigami.SearchField {
             id: textField
             placeholderText: "What's on your mind?"
             Layout.fillWidth: true
             Layout.leftMargin: Kirigami.Units.smallSpacing
-            Keys.onReturnPressed: {
-                searchButton.clicked()
-            }
+            onAccepted: searchButton.clicked()
         }
         Controls.Button {
             id: searchButton
