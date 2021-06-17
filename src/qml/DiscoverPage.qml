@@ -17,8 +17,13 @@ Kirigami.ScrollablePage {
     title: i18n("Discover")
     property string searchText: "https://gpodder.net/search.opml?q="
     property string feedUrl: ""
+    property string name: ""
     onFeedUrlChanged: {
+        xmlFeedModel.source = feedUrl
         console.log("Feed URL changed")
+    }
+    Component.onCompleted: {
+        textField.forceActiveFocus();
     }
 
     //Looking to create a more fancier search bar but for now its bare minimum to test the functionality.
@@ -26,12 +31,15 @@ Kirigami.ScrollablePage {
         width: parent.width
         Controls.TextField {
             id: textField
-            placeholderText: "Enter Search"
+            placeholderText: "What's on your mind?"
             Layout.fillWidth: true
             Layout.leftMargin: Kirigami.Units.smallSpacing
-            focus: true
+            Keys.onReturnPressed: {
+                searchButton.clicked()
+            }
         }
         Controls.Button {
+            id: searchButton
             text: "Search"
             Layout.rightMargin: Kirigami.Units.smallSpacing
             onClicked: xmlSearchModel.source = searchText + textField.text
@@ -44,23 +52,23 @@ Kirigami.ScrollablePage {
         source: searchText
         query: "/opml/body/outline"
 
-        XmlRole { name: "xmlUrl"; query: "@xmlUrl/string()" }
+        XmlRole { name: "xmlUrl"; query: "@xmlUrl/string()";isKey: true }
         XmlRole { name: "description"; query: "@description/string()" }
         XmlRole { name: "htmlUrl"; query: "@htmlUrl/string()" }
         XmlRole { name: "type"; query: "@type/string()" }
-        XmlRole { name: "title"; query: "@title/string()"; isKey: true }
+        XmlRole { name: "title"; query: "@title/string()" }
         XmlRole { name: "text"; query: "@text/string()" }
     }
     //Model to populate the OverlayDrawer which would allow to preview the feed. Currently this logic seems pretty broken so I am not sure how that would work.
     XmlListModel {
         id: xmlFeedModel
-        source: feedUrl
+        source: ""
         query: "/rss/channel"
 
         XmlRole { name: "description"; query: "description/string()" }
         XmlRole { name: "title"; query: "title/string()" }
         XmlRole { name: "link"; query: "link/string()" }
-        XmlRole { name: "url"; query: "image/url/string()" }
+        XmlRole { name: "imageUrl"; query: "image/url/string()" }
     }
 
     Component {
@@ -78,15 +86,13 @@ Kirigami.ScrollablePage {
             actions: [
                 Kirigami.Action {
                     iconName: "kt-add-feeds"
-                    text: "Add to Subscriptions"
+                    text: "Subscribe"
                     onTriggered: DataManager.addFeed(xmlUrl)
                 }
             ]
             onClicked: {
-                feedUrlChanged()
-                feedUrl = xmlUrl
                 xmlFeedModel.source = xmlUrl
-                console.log(xmlFeedModel.get(0).title)
+                feedInfoDrawer.open()
             }
         }
     }
@@ -104,9 +110,29 @@ Kirigami.ScrollablePage {
     Kirigami.OverlayDrawer {
         id: feedInfoDrawer
         edge: Qt.BottomEdge
-        contentItem: ColumnLayout {
-            anchors.fill: parent
-            //TODO: Allows the user to preview the feed, will contain important feed details fetched from the "xmlFeedModel" and might use a listview to display the entries, a latter addon would be to add a "subscribe" button that would add the current list to the subscriptions list. Now this would be an bottom OverlayDrawer for the mobile app and OverlaySheet for the desktop app but this is open for discussion as there is already the mediaFooter. (not so sure with the scope of the XmlListModel). I can provide mockups.
+        height: 600
+        parent: page
+        Column {
+            width: parent.width
+            spacing: 10
+            visible: xmlFeedModel.status == 1
+            GenericHeader {
+                id: infoHeader
+                width: parent.width
+                image: (xmlFeedModel.status == 1) ? xmlFeedModel.get(0).imageUrl : ""
+                title: (xmlFeedModel.status == 1) ? xmlFeedModel.get(0).title : "No Title"
+                subtitle: (xmlFeedModel.status == 1) ? xmlFeedModel.get(0).title : "No Title"
+            }
+            Controls.Label {
+                id: textLabel
+                Layout.margins: Kirigami.Units.gridUnit
+                text: (xmlFeedModel.status == 1) ? xmlFeedModel.get(0).description : "No Description"
+                textFormat: Text.RichText
+                wrapMode: Text.WordWrap
+                width: parent.width
+                onLinkActivated: Qt.openUrlExternally(link)
+                font.pointSize: SettingsManager && !(SettingsManager.articleFontUseSystem) ? SettingsManager.articleFontSize : Kirigami.Units.fontMetrics.font.pointSize
+            }
         }
     }
 }
