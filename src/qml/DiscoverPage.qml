@@ -86,7 +86,7 @@ Kirigami.ScrollablePage {
             onClicked: {
                 xmlFeedModel.source = xmlUrl
                 feedUrl = xmlUrl
-                feedInfoDrawer.open()
+                previewDrawer.open()
             }
         }
     }
