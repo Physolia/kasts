@@ -49,7 +49,7 @@ Kirigami.ScrollablePage {
     //Model for the search query. I decided to go with the XmlListModel as it is easier to implement and it seemed ideal for a read-only model that we require for this page.
     XmlListModel {
         id: xmlSearchModel
-        source: searchText
+        source: searchText !== "" ? "https://gpodder.net/search.opml?q=" + searchText : ""
         query: "/opml/body/outline"
 
         XmlRole { name: "xmlUrl"; query: "@xmlUrl/string()";isKey: true }
