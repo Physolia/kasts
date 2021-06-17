@@ -38,7 +38,8 @@ Kirigami.ScrollablePage {
         }
         Controls.Button {
             id: searchButton
-            text: i18n("Search")
+            text: isWidescreen ? i18n("Search") : ""
+            icon.name: "search"
             Layout.rightMargin: Kirigami.Units.smallSpacing
             onClicked: xmlSearchModel.source = searchText + textField.text
         }
