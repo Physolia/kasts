@@ -116,7 +116,7 @@ Kirigami.ScrollablePage {
                 title: (xmlFeedModel.status == 1) ? xmlFeedModel.get(0).title : "No Title"
                 subtitle: (xmlFeedModel.status == 1) ? xmlFeedModel.get(0).title : "No Title"
                 Controls.Button {
-                    text: enabled ? i18n("Subscribe") : i18n("Subscribed")
+                    text: isWidescreen ? (enabled ? i18n("Subscribe") : i18n("Subscribed")) : ""
                     icon.name: "kt-add-feeds"
                     anchors.right: parent.right
                     anchors.top: parent.top
