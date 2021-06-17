@@ -31,14 +31,14 @@ Kirigami.ScrollablePage {
         width: parent.width
         Kirigami.SearchField {
             id: textField
-            placeholderText: "What's on your mind?"
+            placeholderText: i18n("What's on your mind?")
             Layout.fillWidth: true
             Layout.leftMargin: Kirigami.Units.smallSpacing
             onAccepted: searchButton.clicked()
         }
         Controls.Button {
             id: searchButton
-            text: "Search"
+            text: i18n("Search")
             Layout.rightMargin: Kirigami.Units.smallSpacing
             onClicked: xmlSearchModel.source = searchText + textField.text
         }
@@ -115,7 +115,7 @@ Kirigami.ScrollablePage {
                 title: (xmlFeedModel.status == 1) ? xmlFeedModel.get(0).title : "No Title"
                 subtitle: (xmlFeedModel.status == 1) ? xmlFeedModel.get(0).title : "No Title"
                 Controls.Button {
-                    text: enabled ? "Subscribe" : "Subscribed"
+                    text: enabled ? i18n("Subscribe") : i18n("Subscribed")
                     icon.name: "kt-add-feeds"
                     anchors.right: parent.right
                     anchors.top: parent.top
@@ -130,7 +130,7 @@ Kirigami.ScrollablePage {
             Controls.Label {
                 id: previewLabel
                 Layout.margins: Kirigami.Units.gridUnit
-                text: (xmlFeedModel.status == 1) ? xmlFeedModel.get(0).description : "No Description"
+                text: (xmlFeedModel.status == 1) ? xmlFeedModel.get(0).description : i18n("No Description")
                 textFormat: Text.RichText
                 wrapMode: Text.WordWrap
                 width: parent.width
