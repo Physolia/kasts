@@ -69,6 +69,13 @@ Kirigami.ScrollablePage {
         XmlRole { name: "link"; query: "link/string()" }
         XmlRole { name: "imageUrl"; query: "image/url/string()" }
     }
+    XmlListModel {
+        id: xmlTitleModel
+        source: ""
+        query: "/rss/channel/item"
+
+        XmlRole { name: "title"; query: "title/string()" }
+    }
 
     Component {
         id: delegateComponent
@@ -85,6 +92,7 @@ Kirigami.ScrollablePage {
             onClicked: {
                 xmlFeedModel.source = xmlUrl
                 feedUrl = xmlUrl
+                xmlTitleModel.source = xmlUrl
                 previewDrawer.open()
             }
         }
@@ -103,8 +111,19 @@ Kirigami.ScrollablePage {
     Kirigami.OverlayDrawer {
         id: previewDrawer
         edge: Qt.BottomEdge
+        modal: true
         height: 600
         parent: page
+        Column {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: parent.top
+            anchors.topMargin: 50
+            visible: xmlFeedModel.status !== 1
+            Controls.BusyIndicator {}
+            Controls.Label {
+                text: i18n("Loading...")
+            }
+        }
         Column {
             width: parent.width
             spacing: 10
@@ -117,7 +136,7 @@ Kirigami.ScrollablePage {
                 subtitle: (xmlFeedModel.status == 1) ? xmlFeedModel.get(0).title : "No Title"
                 Controls.Button {
                     text: isWidescreen ? (enabled ? i18n("Subscribe") : i18n("Subscribed")) : ""
-                    icon.name: "kt-add-feeds"
+                    icon.name: !DataManager.isFeedExists(feedUrl) ? "kt-add-feeds" : "answer"
                     anchors.right: parent.right
                     anchors.top: parent.top
                     anchors.rightMargin: Kirigami.Units.largeSpacing * 2
