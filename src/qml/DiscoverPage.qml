@@ -124,10 +124,13 @@ Kirigami.ScrollablePage {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             anchors.topMargin: 50
-            visible: xmlFeedModel.status !== 1
-            Controls.BusyIndicator {}
+            visible: xmlFeedModel.status == 0
+            Kirigami.Icon {
+                source: "data-error"
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
             Controls.Label {
-                text: i18n("Loading...")
+                text: i18n("No data found")
             }
         }
         Column {
@@ -162,6 +165,29 @@ Kirigami.ScrollablePage {
                 width: parent.width
                 onLinkActivated: Qt.openUrlExternally(link)
                 font.pointSize: SettingsManager && !(SettingsManager.articleFontUseSystem) ? SettingsManager.articleFontSize : Kirigami.Units.fontMetrics.font.pointSize
+            }
+        }
+        Column {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: parent.top
+            anchors.topMargin: 50
+            visible: xmlFeedModel.status == 2
+            Controls.BusyIndicator {}
+            Controls.Label {
+                text: i18n("Loading...")
+            }
+        }
+        Column {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: parent.top
+            anchors.topMargin: 50
+            visible: xmlFeedModel.status == 3
+            Kirigami.Icon {
+                source: "edit-none"
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+            Controls.Label {
+                text: i18n("Failed to load")
             }
         }
     }
