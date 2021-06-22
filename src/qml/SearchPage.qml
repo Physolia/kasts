@@ -13,63 +13,37 @@ import org.kde.kirigami 2.15 as Kirigami
 import org.kde.kasts 1.0
 
 Kirigami.ScrollablePage {
-    id: page
-    title: i18n("Discover")
-    actions.main: Kirigami.Action {
-        iconName: "search"
-        text: i18n("Search")
-        onTriggered: pageStack.push("qrc:/SearchPage.qml")
+    title: i18n("Search")
+    property string searchText: "https://gpodder.net/search.opml?q="
+    property string feedUrl: ""
+    property string name: ""
+    onFeedUrlChanged: {
+        xmlFeedModel.source = feedUrl
+        console.log("Feed URL changed")
     }
-    ListModel {
-        id: categoryModel
-        ListElement {
-            categoryTitle: "Technology"
-            categoryUrl: "https://gpodder.net/search.opml?q=technology"
+    header: RowLayout {
+        width: parent.width
+        Kirigami.SearchField {
+            id: textField
+            placeholderText: i18n("What's on your mind?")
+            Layout.fillWidth: true
+            Layout.leftMargin: Kirigami.Units.smallSpacing
+            onAccepted: searchButton.clicked()
         }
-        ListElement {
-            categoryTitle: "Science"
-            categoryUrl: "https://gpodder.net/search.opml?q=science"
+        Controls.Button {
+            id: searchButton
+            text: isWidescreen ? i18n("Search") : ""
+            icon.name: "search"
+            Layout.rightMargin: Kirigami.Units.smallSpacing
+            onClicked: xmlSearchModel.source = searchText + textField.text
         }
-        ListElement {
-            categoryTitle: "Politics"
-            categoryUrl: "https://gpodder.net/search.opml?q=politics"
-        }
-        ListElement {
-            categoryTitle: "Educational"
-            categoryUrl: "https://gpodder.net/search.opml?q=educational"
-        }
-        ListElement {
-            categoryTitle: "Stories"
-            categoryUrl: "https://gpodder.net/search.opml?q=stories"
-        }
-        ListElement {
-            categoryTitle: "Sports"
-            categoryUrl: "https://gpodder.net/search.opml?q=sports"
-        }
-        ListElement {
-            categoryTitle: "Health"
-            categoryUrl: "https://gpodder.net/search.opml?q=health"
-        }
-        ListElement {
-            categoryTitle: "Games"
-            categoryUrl: "https://gpodder.net/search.opml?q=games"
-        }
-        ListElement {
-            categoryTitle: "Comedy"
-            categoryUrl: "https://gpodder.net/search.opml?q=comedy"
-        }
-        ListElement {
-            categoryTitle: "Family"
-            categoryUrl: "https://gpodder.net/search.opml?q=family"
-        }
-        ListElement {
-            categoryTitle: "Arts"
-            categoryUrl: "https://gpodder.net/search.opml?q=arts"
-        }
+    }
+    Component.onCompleted: {
+        textField.forceActiveFocus();
     }
     XmlListModel {
         id: xmlSearchModel
-        source: categoryUrl
+        source: searchText !== "" ? "https://gpodder.net/search.opml?q=" + searchText : ""
         query: "/opml/body/outline"
 
         XmlRole { name: "xmlUrl"; query: "@xmlUrl/string()";isKey: true }
@@ -95,6 +69,13 @@ Kirigami.ScrollablePage {
         XmlRole { name: "ownername"; query: "itunes:owner/itunes:name/string()" }
         XmlRole { name: "owneremail"; query: "itunes:owner/itunes:email/string()" }
     }
+    XmlListModel {
+        id: xmlTitleModel
+        source: ""
+        query: "/rss/channel/item"
+
+        XmlRole { name: "title"; query: "title/string()" }
+    }
     Component {
         id: delegateComponent
         Kirigami.SwipeListItem {
@@ -107,19 +88,22 @@ Kirigami.ScrollablePage {
                     color: listItem.checked || (listItem.pressed && !listItem.checked && !listItem.sectionDelegate) ? listItem.activeTextColor : listItem.textColor
                 }
             }
+            onClicked: {
+                xmlFeedModel.source = xmlUrl
+                feedUrl = xmlUrl
+                xmlTitleModel.source = xmlUrl
+                previewDrawer.open()
+            }
         }
     }
     ListView {
-        id: mainList
-        model: categoryModel
-        delegate: ColumnLayout {
-            width: parent.width
-            Kirigami.Heading {
-                Layout.fillWidth: true
-                Layout.topMargin: Kirigami.Units.gridUnit
-                Layout.leftMargin: Kirigami.Units.gridUnit
-                text: categoryTitle
-            }
+        anchors.fill: parent
+        model: xmlSearchModel
+        spacing: 5
+        clip: true
+        delegate: Kirigami.DelegateRecycler {
+            width: parent ? parent.width : implicitWidth
+            sourceComponent: delegateComponent
         }
     }
 }
