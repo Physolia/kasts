@@ -45,6 +45,17 @@ Kirigami.ScrollablePage {
 
         Kirigami.Heading {
             Kirigami.FormData.isSection: true
+            text: i18n("Playback Settings")
+        }
+
+        Controls.Button {
+            icon.name: "error"
+            text: i18n("Toggle playback rates presets")
+            onClicked: playbackRateSelector.open()
+        }
+
+        Kirigami.Heading {
+            Kirigami.FormData.isSection: true
             text: i18n("Queue Settings")
         }
 

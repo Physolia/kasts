@@ -327,6 +327,10 @@ Kirigami.ApplicationWindow {
         id: playbackRateDialog
     }
 
+    PlaybackRateSelector {
+        id: playbackRateSelector
+    }
+
     //Global Shortcuts
     Shortcut {
         sequence:  "space"
