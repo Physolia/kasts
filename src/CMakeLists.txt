@@ -23,6 +23,7 @@ set(SRCS_base
     podcastsearchmodel.cpp
     storagemanager.cpp
     storagemovejob.cpp
+    playbackratemodel.cpp
     mpris2/mpris2.cpp
     resources.qrc
 )
