@@ -33,15 +33,15 @@ Loader {
                 Row {
                     Controls.Slider {
                         id: slider
-                        from: 0.25
-                        value: 1.0
-                        to: 4.0
+                        from: 25
+                        value: 100
+                        to: 400
                         snapMode: Controls.Slider.SnapAlways
-                        stepSize: 0.05
+                        stepSize: 5
                     }
                     Kirigami.ActionTextField {
                         id: textField
-                        text: round(slider.value);
+                        text: round(slider.value) / 100
                         width: Kirigami.Units.gridUnit * 4
                         validator: DoubleValidator {
                             bottom: 0.25
@@ -53,12 +53,11 @@ Loader {
                                 icon.name: "list-add"
                                 visible: textField.acceptableInput
                                 onTriggered: {
-                                    console.log("Added to presets")
                                     console.log(slider.value)
                                 }
                             }
                         ]
-                        onEditingFinished: slider.value = round(textField.text)
+                        onEditingFinished: slider.value = 100 * round(textField.text)
                     }
                 }
             }
