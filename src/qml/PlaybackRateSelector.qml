@@ -53,7 +53,7 @@ Loader {
                                 icon.name: "list-add"
                                 visible: textField.acceptableInput
                                 onTriggered: {
-                                    console.log(slider.value)
+                                    PlaybackRateModel.insertPlaybackRate(slider.value);
                                 }
                             }
                         ]

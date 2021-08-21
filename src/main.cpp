@@ -136,8 +136,8 @@ int main(int argc, char *argv[])
     qmlRegisterSingletonInstance("org.kde.kasts", 1, 0, "ErrorLogModel", &ErrorLogModel::instance());
     qmlRegisterSingletonInstance("org.kde.kasts", 1, 0, "AudioManager", &AudioManager::instance());
     qmlRegisterSingletonInstance("org.kde.kasts", 1, 0, "StorageManager", &StorageManager::instance());
-    qmlRegisterSingletonType<PLaybackRateModel>("org.kde.kasts", 1, 0, "PLaybackRateModel", [](QQmlEngine *, QJSEngine *) -> QObject * {
-        return PLaybackRateModel::instance();
+    qmlRegisterSingletonType<PlaybackRateModel>("org.kde.kasts", 1, 0, "PlaybackRateModel", [](QQmlEngine *, QJSEngine *) -> QObject * {
+        return PlaybackRateModel::instance();
     });
 
     qRegisterMetaType<Entry *>("const Entry*"); // "hack" to make qml understand Entry*
