@@ -28,8 +28,18 @@ Loader {
             id: listViewSheet
             header: Kirigami.Heading {
                 text: i18n("Select Playback Rates")
+                level: 2
             }
-            Column {
+            footer: RowLayout {
+                Item { Layout.fillWidth: true }
+                Controls.Button {
+                    icon.name: "edit-reset"
+                    text: i18n("Reset to Default")
+                    onClicked: PlaybackRateModel.resetToDefault()
+                }
+            }
+            contentItem: ColumnLayout {
+                Layout.preferredWidth:  Kirigami.Units.gridUnit * 15
                 Row {
                     Controls.Slider {
                         id: slider
@@ -58,6 +68,19 @@ Loader {
                             }
                         ]
                         onEditingFinished: slider.value = 100 * round(textField.text)
+                    }
+                }
+                Flow {
+                    spacing: Kirigami.Units.smallSpacing
+                    Layout.fillWidth: true
+
+                    Repeater {
+                        id: repeater
+                        model: PlaybackRateModel
+
+                        Controls.Button {
+                            text: rate.playbackRate
+                        }
                     }
                 }
             }

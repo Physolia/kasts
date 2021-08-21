@@ -14,7 +14,7 @@
 const QString RATE_CFG_GROUP = QStringLiteral("General"), RATE_CFG_KEY = QStringLiteral("rates");
 
 PlaybackRate::PlaybackRate(const QJsonObject &obj)
-    : m_playbackRate(obj[QStringLiteral("playbackRate")].toInt())
+    : m_playbackRate(obj[QStringLiteral("rate")].toInt())
 {
 }
 
@@ -33,7 +33,7 @@ void PlaybackRate::setPlaybackRate(const int &rate)
 QJsonObject PlaybackRate::toJson() const
 {
     QJsonObject obj;
-    obj[QStringLiteral("playbackRate")] = m_playbackRate;
+    obj[QStringLiteral("rate")] = m_playbackRate;
     return obj;
 }
 
@@ -61,8 +61,8 @@ void PlaybackRateModel::load()
     QJsonDocument doc = QJsonDocument::fromJson(group.readEntry(RATE_CFG_KEY, "{}").toUtf8());
 
     const auto array = doc.array();
-    std::transform(array.begin(), array.end(), std::back_inserter(m_playbackRates), [](const QJsonValue &ser) {
-        return new PlaybackRate(ser.toObject());
+    std::transform(array.begin(), array.end(), std::back_inserter(m_playbackRates), [](const QJsonValue &r) {
+        return new PlaybackRate(r.toObject());
     });
 }
 
