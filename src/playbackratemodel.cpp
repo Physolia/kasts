@@ -92,9 +92,9 @@ QVariant PlaybackRateModel::data(const QModelIndex &index, int role) const
     if (!index.isValid() || index.row() >= m_playbackRates.count() || index.row() < 0)
         return {};
 
-    auto *search = m_playbackRates.at(index.row());
+    auto *r = m_playbackRates.at(index.row());
     if (role == Roles::PlaybackRateRole)
-        return QVariant::fromValue(search);
+        return QVariant::fromValue(r);
 
     return {};
 }
@@ -126,12 +126,12 @@ void PlaybackRateModel::deletePlaybackRate(const int index)
 void PlaybackRateModel::resetToDefault()
 {
     beginResetModel();
-    for (auto &search : m_playbackRates) {
-        delete search;
+    for (auto &r : m_playbackRates) {
+        delete r;
     }
     m_playbackRates.clear();
     endResetModel();
-    qDebug() << "Success! The rates value are now set to default.";
+    qDebug() << "Success! Default set.";
 
     save();
 }
