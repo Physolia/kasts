@@ -117,7 +117,6 @@ Flickable {
             id: mobileTrackPlayer
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.margins: Kirigami.Units.largeSpacing * 2
         }
     }
 }

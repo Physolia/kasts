@@ -21,16 +21,44 @@ Kirigami.Page {
     clip: true
     Layout.margins: 0
 
-    padding: 0
+    leftPadding: 0
+    rightPadding: 0
+    topPadding: 0
     bottomPadding: Kirigami.Units.gridUnit
+
+    Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
+    Kirigami.Theme.inherit: false
+
+    background: Image {
+        source: AudioManager.entry.cachedImage
+        asynchronous: true
+
+        anchors.fill: parent
+        fillMode: Image.PreserveAspectCrop
+
+        layer.enabled: true
+        layer.effect: HueSaturation {
+            cached: true
+
+            lightness: -0.5
+            saturation: 0.9
+
+            layer.enabled: true
+            layer.effect: FastBlur {
+                cached: true
+                radius: 100
+                transparentBorder: false
+            }
+        }
+    }
 
     ColumnLayout {
         id: playerControlsColumn
         anchors.fill: parent
-        anchors.topMargin:0
+        anchors.margins: Kirigami.Units.largeSpacing * 2
         Controls.Button {
             id: swipeUpButton
-            property int swipeUpButtonSize: Kirigami.Units.gridUnit * 2
+            property int swipeUpButtonSize: Kirigami.Units.iconSizes.smallMedium
             icon.name: "arrow-down"
             icon.height: swipeUpButtonSize
             icon.width: swipeUpButtonSize
@@ -38,6 +66,8 @@ Kirigami.Page {
             Layout.alignment: Qt.AlignHCenter
             Layout.topMargin: 0
             onClicked: toClose.restart()
+            Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
+                        Kirigami.Theme.inherit: false
         }
         Controls.SwipeView {
             id: swipeView
@@ -85,6 +115,7 @@ Kirigami.Page {
             Item {
                 Flickable {
                     anchors.fill: parent
+                    anchors.leftMargin: playerControlsColumn.anchors.margins
                     clip: true
                     contentHeight: description.height
                     ColumnLayout {
@@ -193,6 +224,7 @@ Kirigami.Page {
                             text: AudioManager.playbackRate + "x"
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
+                            color: "white"
                         }
                         onClicked: {
                             playbackRateDialog.open()
@@ -202,47 +234,61 @@ Kirigami.Page {
                         padding: 0
                         implicitWidth: playButton.width
                         implicitHeight: playButton.height
+                        Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
+                        Kirigami.Theme.inherit: false
                     }
                     Controls.Button {
                         icon.name: "media-seek-backward"
                         icon.height: parent.iconSize
                         icon.width: parent.iconSize
+                        icon.color: "white"
                         flat: true
                         Layout.alignment: Qt.AlignHCenter
                         Layout.preferredWidth: parent.buttonSize
                         onClicked: AudioManager.skipBackward()
                         enabled: AudioManager.canSkipBackward
+                        Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
+                        Kirigami.Theme.inherit: false
                     }
                     Controls.Button {
                         id: playButton
                         icon.name: AudioManager.playbackState === Audio.PlayingState ? "media-playback-pause" : "media-playback-start"
                         icon.height: parent.iconSize
                         icon.width: parent.iconSize
+                        icon.color: "white"
                         flat: true
                         Layout.alignment: Qt.AlignHCenter
                         Layout.preferredWidth: parent.buttonSize
                         onClicked: AudioManager.playbackState === Audio.PlayingState ? AudioManager.pause() : AudioManager.play()
                         enabled: AudioManager.canPlay
+                        Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
+                        Kirigami.Theme.inherit: false
                     }
                     Controls.Button {
                         icon.name: "media-seek-forward"
                         icon.height: parent.iconSize
                         icon.width: parent.iconSize
+                        icon.color: "white"
                         flat: true
                         Layout.alignment: Qt.AlignHCenter
                         Layout.preferredWidth: parent.buttonSize
                         onClicked: AudioManager.skipForward()
                         enabled: AudioManager.canSkipForward
+                        Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
+                        Kirigami.Theme.inherit: false
                     }
                     Controls.Button {
                         icon.name: "media-skip-forward"
                         icon.height: parent.iconSize
                         icon.width: parent.iconSize
+                        icon.color: "white"
                         flat: true
                         Layout.alignment: Qt.AlignHCenter
                         Layout.preferredWidth: parent.buttonSize
                         onClicked: AudioManager.next()
                         enabled: AudioManager.canGoNext
+                        Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
+                        Kirigami.Theme.inherit: false
                     }
                 }
             }
