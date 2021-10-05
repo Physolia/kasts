@@ -39,6 +39,7 @@
 #include "entry.h"
 #include "feed.h"
 #include "fetcher.h"
+#include "imageprovider.h"
 #include "kasts-version.h"
 #include "models/chaptermodel.h"
 #include "models/downloadmodel.h"
@@ -147,6 +148,7 @@ int main(int argc, char *argv[])
     // Make sure that settings are saved before the application exits
     QObject::connect(&app, &QCoreApplication::aboutToQuit, SettingsManager::self(), &SettingsManager::save);
 
+    engine.addImageProvider(QLatin1String("img"), new ImageProvider);
     engine.load(QUrl(QStringLiteral("qrc:///main.qml")));
 
     if (engine.rootObjects().isEmpty()) {

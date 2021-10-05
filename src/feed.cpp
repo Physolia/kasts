@@ -69,12 +69,6 @@ Feed::Feed(const QString &feedurl)
                     setRefreshing(false);
                 }
             });
-    connect(&Fetcher::instance(), &Fetcher::downloadFinished, this, [this](QString url) {
-        if (url == m_image) {
-            Q_EMIT imageChanged(url);
-            Q_EMIT cachedImageChanged(cachedImage());
-        }
-    });
 
     m_entries = new EntriesModel(this);
 }
@@ -145,7 +139,7 @@ QString Feed::image() const
 
 QString Feed::cachedImage() const
 {
-    return Fetcher::instance().image(m_image);
+    return m_image;
 }
 
 QString Feed::link() const

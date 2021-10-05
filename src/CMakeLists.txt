@@ -18,6 +18,7 @@ set(SRCS_base
     storagemovejob.cpp
     updatefeedjob.cpp
     fetchfeedsjob.cpp
+    imageprovider.cpp
     models/chaptermodel.cpp
     models/feedsmodel.cpp
     models/feedsproxymodel.cpp

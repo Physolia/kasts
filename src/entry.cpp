@@ -21,16 +21,6 @@ Entry::Entry(Feed *feed, const QString &id)
     : QObject(&DataManager::instance())
     , m_feed(feed)
 {
-    connect(&Fetcher::instance(), &Fetcher::downloadFinished, this, [this](QString url) {
-        if (url == m_image) {
-            Q_EMIT imageChanged(url);
-            Q_EMIT cachedImageChanged(cachedImage());
-        } else if (m_image.isEmpty() && url == m_feed->image()) {
-            Q_EMIT imageChanged(url);
-            Q_EMIT cachedImageChanged(cachedImage());
-        }
-    });
-
     QSqlQuery entryQuery;
     entryQuery.prepare(QStringLiteral("SELECT * FROM Entries WHERE feed=:feed AND id=:id;"));
     entryQuery.bindValue(QStringLiteral(":feed"), m_feed->url());
@@ -261,7 +251,7 @@ QString Entry::cachedImage() const
         image = m_feed->image();
     }
 
-    return Fetcher::instance().image(image);
+    return image;
 }
 
 bool Entry::queueStatus() const
