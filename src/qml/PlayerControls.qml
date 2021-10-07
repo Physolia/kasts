@@ -67,7 +67,7 @@ Kirigami.Page {
             Layout.topMargin: 0
             onClicked: toClose.restart()
             Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
-                        Kirigami.Theme.inherit: false
+            Kirigami.Theme.inherit: false
         }
         Controls.SwipeView {
             id: swipeView
