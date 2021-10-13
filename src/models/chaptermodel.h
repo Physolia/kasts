@@ -24,6 +24,8 @@ class ChapterModel : public QAbstractListModel
 
     Q_PROPERTY(QString enclosureId READ enclosureId WRITE setEnclosureId NOTIFY enclosureIdChanged)
     Q_PROPERTY(QString enclosurePath READ enclosurePath WRITE setEnclosurePath NOTIFY enclosurePathChanged)
+    Q_PROPERTY(int duration READ duration WRITE setDuration NOTIFY durationChanged)
+    Q_PROPERTY(int size READ size NOTIFY sizeChanged)
 
 public:
     enum RoleNames {
@@ -32,6 +34,7 @@ public:
         Image,
         StartTime,
         FormattedStartTime,
+        Duration,
     };
 
     explicit ChapterModel(QObject *parent = nullptr);
@@ -46,9 +49,15 @@ public:
     void setEnclosurePath(const QString &enclosurePath);
     QString enclosurePath() const;
 
+    void setDuration(int duration);
+    int duration() const;
+    int size() const;
+
 Q_SIGNALS:
     void enclosureIdChanged();
     void enclosurePathChanged();
+    void durationChanged();
+    void sizeChanged();
 
 private:
     void load();
@@ -60,4 +69,5 @@ private:
     QVector<ChapterEntry> m_chapters;
     KFormat m_kformat;
     QString m_enclosurePath;
+    int m_duration;
 };

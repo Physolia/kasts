@@ -171,12 +171,10 @@ Kirigami.Page {
 
                         text: i18n("No chapters found.")
                     }
+
                     ListView {
                         id: chapterList
-                        model: ChapterModel {
-                            enclosureId: AudioManager.entry.id
-                            enclosurePath: AudioManager.entry.enclosure.path
-                        }
+                        model: chapterModel
                         clip: true
                         visible: chapterList.count !== 0
                         anchors.fill: parent
@@ -212,16 +210,16 @@ Kirigami.Page {
                 anchors.right: parent.right
                 anchors.margins: 0
 
-                Controls.Slider {
-                    enabled: AudioManager.entry
+                ChapterSlider {
+                    id: chapterSlider
+                    model: chapterModel
+                    duration: AudioManager.duration
                     Layout.fillWidth: true
                     Layout.leftMargin: Kirigami.Units.largeSpacing
                     Layout.rightMargin: Kirigami.Units.largeSpacing
                     padding: 0
-                    from: 0
-                    to: AudioManager.duration
+                    Layout.preferredHeight: 16
                     value: AudioManager.position
-                    onMoved: AudioManager.seek(value)
                 }
                 RowLayout {
                     id: controls
@@ -342,5 +340,11 @@ Kirigami.Page {
                 }
             }
         }
+    }
+
+    ChapterModel {
+        id: chapterModel
+        enclosureId: AudioManager.entry.id
+        enclosurePath: AudioManager.entry.enclosure.path
     }
 }

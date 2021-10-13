@@ -39,6 +39,13 @@ QVariant ChapterModel::data(const QModelIndex &index, int role) const
         return QVariant::fromValue(m_chapters.at(row).start);
     case FormattedStartTime:
         return QVariant::fromValue(m_kformat.formatDuration(m_chapters.at(row).start * 1000));
+    case Duration: {
+        if (m_chapters.size() > row + 1) {
+            return QVariant::fromValue(m_chapters.at(row + 1).start - m_chapters.at(row).start);
+        } else {
+            return QVariant::fromValue(m_duration - m_chapters.at(row).start);
+        }
+    }
     default:
         return QVariant();
     }
@@ -61,6 +68,7 @@ QHash<int, QByteArray> ChapterModel::roleNames() const
         {Image, "image"},
         {StartTime, "start"},
         {FormattedStartTime, "formattedStart"},
+        {Duration, "duration"},
     };
 }
 
@@ -86,6 +94,7 @@ void ChapterModel::load()
         loadChaptersFromFile();
     }
     endResetModel();
+    Q_EMIT sizeChanged();
 }
 
 void ChapterModel::loadFromDatabase()
@@ -146,4 +155,20 @@ void ChapterModel::setEnclosurePath(const QString &enclosurePath)
 QString ChapterModel::enclosurePath() const
 {
     return m_enclosurePath;
+}
+
+void ChapterModel::setDuration(int duration)
+{
+    m_duration = duration;
+    Q_EMIT durationChanged();
+}
+
+int ChapterModel::duration() const
+{
+    return m_duration;
+}
+
+int ChapterModel::size() const
+{
+    return m_chapters.size();
 }
