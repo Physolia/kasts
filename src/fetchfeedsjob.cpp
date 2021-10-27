@@ -51,7 +51,7 @@ void FetchFeedsJob::fetch()
         connect(this, &FetchFeedsJob::aborting, updateFeedJob, &UpdateFeedJob::abort);
         connect(updateFeedJob, &UpdateFeedJob::result, this, [this, url, updateFeedJob]() {
             if (updateFeedJob->error()) {
-                Q_EMIT logError(Error::Type::FeedUpdate, url, QString(), updateFeedJob->error(), updateFeedJob->errorString(), QString());
+                Q_EMIT logError(Error::Type::FeedUpdate, url, QStringLiteral(""), updateFeedJob->error(), updateFeedJob->errorString(), QStringLiteral(""));
             }
             setProcessedAmount(KJob::Unit::Items, processedAmount(KJob::Unit::Items) + 1);
         });

@@ -9,6 +9,7 @@
 #include <QDomElement>
 #include <QMultiMap>
 #include <QNetworkReply>
+#include <QSqlError>
 #include <QSqlQuery>
 #include <QTextDocumentFragment>
 #include <QTimer>
@@ -16,6 +17,7 @@
 #include <KLocalizedString>
 
 #include "database.h"
+#include "datamanager.h"
 #include "enclosure.h"
 #include "fetcher.h"
 #include "fetcherlogging.h"
@@ -39,7 +41,7 @@ void UpdateFeedJob::start()
 
 void UpdateFeedJob::retrieveFeed()
 {
-    if (m_abort) {
+    if (m_abort || error()) {
         emitResult();
         return;
     }
@@ -186,13 +188,13 @@ void UpdateFeedJob::processFeed(Syndication::FeedPtr feed)
     // TODO: Only emit signal if the details have really changed
     Q_EMIT feedDetailsUpdated(m_url, feed->title(), image, feed->link(), feed->description(), current);
 
-    if (m_abort)
+    if (m_abort || error())
         return;
 
     // Now deal with the entries, enclosures, entry authors and chapter marks
     bool updatedEntries = false;
     for (const auto &entry : feed->items()) {
-        if (m_abort)
+        if (m_abort || error())
             return;
         QCoreApplication::processEvents(); // keep the main thread semi-responsive
         bool isNewEntry = processEntry(entry);
@@ -200,6 +202,9 @@ void UpdateFeedJob::processFeed(Syndication::FeedPtr feed)
     }
 
     writeToDatabase();
+
+    if (m_abort || error())
+        return;
 
     if (m_isNewFeed) {
         // Finally, reset the new flag to false now that the new feed has been
@@ -370,6 +375,7 @@ void UpdateFeedJob::processChapter(const QString &entryId, const int &start, con
 
 void UpdateFeedJob::writeToDatabase()
 {
+    bool success = true;
     QSqlQuery writeQuery;
 
     Database::instance().transaction();
@@ -389,7 +395,11 @@ void UpdateFeedJob::writeToDatabase()
         writeQuery.bindValue(QStringLiteral(":read"), entryDetails.read);
         writeQuery.bindValue(QStringLiteral(":new"), entryDetails.isNew);
         writeQuery.bindValue(QStringLiteral(":image"), entryDetails.image);
-        Database::instance().execute(writeQuery);
+        success = Database::instance().execute(writeQuery) && success;
+        if (!success && !error()) {
+            setError(writeQuery.lastError().type());
+            setErrorText(writeQuery.lastError().text());
+        }
     }
 
     // Authors
@@ -400,7 +410,11 @@ void UpdateFeedJob::writeToDatabase()
         writeQuery.bindValue(QStringLiteral(":name"), authorDetails.name);
         writeQuery.bindValue(QStringLiteral(":uri"), authorDetails.uri);
         writeQuery.bindValue(QStringLiteral(":email"), authorDetails.email);
-        Database::instance().execute(writeQuery);
+        success = Database::instance().execute(writeQuery) && success;
+        if (!success && !error()) {
+            setError(writeQuery.lastError().type());
+            setErrorText(writeQuery.lastError().text());
+        }
     }
 
     // Enclosures
@@ -415,7 +429,11 @@ void UpdateFeedJob::writeToDatabase()
         writeQuery.bindValue(QStringLiteral(":url"), enclosureDetails.url);
         writeQuery.bindValue(QStringLiteral(":playposition"), enclosureDetails.playPosition);
         writeQuery.bindValue(QStringLiteral(":downloaded"), Enclosure::statusToDb(enclosureDetails.downloaded));
-        Database::instance().execute(writeQuery);
+        success = Database::instance().execute(writeQuery) && success;
+        if (!success && !error()) {
+            setError(writeQuery.lastError().type());
+            setErrorText(writeQuery.lastError().text());
+        }
     }
 
     // Chapters
@@ -427,12 +445,25 @@ void UpdateFeedJob::writeToDatabase()
         writeQuery.bindValue(QStringLiteral(":title"), chapterDetails.title);
         writeQuery.bindValue(QStringLiteral(":link"), chapterDetails.link);
         writeQuery.bindValue(QStringLiteral(":image"), chapterDetails.image);
-        Database::instance().execute(writeQuery);
+        success = Database::instance().execute(writeQuery) && success;
+        if (!success && !error()) {
+            setError(writeQuery.lastError().type());
+            setErrorText(writeQuery.lastError().text());
+        }
     }
 
-    if (Database::instance().commit()) {
-        for (EntryDetails entryDetails : m_entries) {
-            Q_EMIT entryAdded(m_url, entryDetails.id);
+    if (success) {
+        if (Database::instance().commit()) {
+            for (EntryDetails entryDetails : m_entries) {
+                Q_EMIT entryAdded(m_url, entryDetails.id);
+            }
+        }
+    } else {
+        Database::instance().rollback();
+        qWarning() << "Error adding updates to database; rolling back changes:" << m_url;
+        if (m_isNewFeed) {
+            DataManager::instance().removeFeed(DataManager::instance().getFeed(m_url));
+            qWarning() << "Error adding new feed to database; removing" << m_url;
         }
     }
 }

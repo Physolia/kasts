@@ -26,6 +26,7 @@ public:
 
     bool transaction();
     bool commit();
+    bool rollback();
 
 private:
     Database();

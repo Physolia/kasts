@@ -168,6 +168,11 @@ bool Database::commit()
     return QSqlDatabase::database().commit();
 }
 
+bool Database::rollback()
+{
+    return QSqlDatabase::database().rollback();
+}
+
 int Database::version()
 {
     QSqlQuery query;
