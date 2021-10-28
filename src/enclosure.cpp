@@ -105,7 +105,7 @@ void Enclosure::download()
     }
 
     checkSizeOnDisk();
-    EnclosureDownloadJob *downloadJob = new EnclosureDownloadJob(m_url, path(), m_entry->title());
+    EnclosureDownloadJob *downloadJob = new EnclosureDownloadJob(m_url, path(), m_entry->title(), m_entry->feed()->url());
     downloadJob->start();
 
     qint64 resumedAt = m_sizeOnDisk;
@@ -126,6 +126,10 @@ void Enclosure::download()
             } else {
                 setStatus(Downloadable);
             }
+            /*if (downloadJob->error() == QNetworkReply::InsecureRedirectError) {
+                // Ask user to allow insecure redirects for this feed
+
+            } else  */
             if (downloadJob->error() != QNetworkReply::OperationCanceledError) {
                 m_entry->feed()->setErrorId(downloadJob->error());
                 m_entry->feed()->setErrorString(downloadJob->errorString());
