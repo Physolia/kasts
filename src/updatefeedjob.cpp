@@ -194,9 +194,11 @@ void UpdateFeedJob::processFeed(Syndication::FeedPtr feed)
     for (const auto &entry : feed->items()) {
         if (m_abort)
             return;
-        // QCoreApplication::processEvents(); // keep the main thread semi-responsive
         bool isNewEntry = processEntry(entry);
         updatedEntries = updatedEntries || isNewEntry;
+        qDebug() << "start processing other events";
+        QCoreApplication::processEvents(); // keep the main thread semi-responsive
+        qDebug() << "stop processing other events";
     }
 
     writeToDatabase();
